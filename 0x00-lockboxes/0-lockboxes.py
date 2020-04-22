@@ -3,23 +3,14 @@
 
 
 def canUnlockAll(boxes):
-    pile = [0]
-    unlocked = [1] + [0] * (len(boxes) - 1)
-    i = 0
-
-    if len(boxes) == 0:
-        return True
-    if not isinstance(boxes, list):
-        return False
-    while pile:
-        k = pile.pop()
-        for key in boxes[k]:
-            if key > 0 and key < len(boxes) and unlocked[key] == 0:
-                unlocked[key] = 1
-                pile.append(key)
-        i = i + 1
-
-    if 0 in unlocked:
-        return False
-    else:
-        return True
+    """ figures out if all boxes can be opened """
+    checked = [False for i in range(len(boxes))]
+    checked[0] = True
+    stack = [0]
+    while len(stack):
+        box = stack.pop(0)
+        for b in boxes[box]:
+            if isinstance(b, int) and b >= 0 and b < len(boxes) and not checked[b]:
+                checked[b] = True
+                stack.append(b)
+    return all(checked)
