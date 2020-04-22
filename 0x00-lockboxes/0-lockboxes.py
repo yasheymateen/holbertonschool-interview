@@ -3,17 +3,23 @@
 
 
 def canUnlockAll(boxes):
-    """ function that uses keys/loops to determine if boxes can be opened """
-    keys = {0}
-    all_open = False
+    pile = [0]
+    unlocked = [1] + [0] * (len(boxes) - 1)
+    i = 0
 
-    while not all_open:
-        unlocked = False
-        for i in range(len(boxes)):
-            if i in keys:
-                for key in boxes[i]:
-                    if key not in keys:
-                        unlocked = True
-                    keys.add(key)
-        all_open = True if not unlocked else False
-    return len(keys) == len(boxes)
+    if len(boxes) == 0:
+        return True
+    if not isinstance(boxes, list):
+        return False
+    while pile:
+        k = pile.pop()
+        for key in boxes[k]:
+            if key > 0 and key < len(boxes) and unlocked[key] == 0:
+                unlocked[key] = 1
+                pile.append(key)
+        i = i + 1
+
+    if 0 in unlocked:
+        return False
+    else:
+        return True
