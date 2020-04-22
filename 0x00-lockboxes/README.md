@@ -10,19 +10,30 @@ You have `n` number of locked boxes in front of you. Each box is numbered sequen
 * Return `true` if all boxes can be opened, else return `False`
 
 #### Main File
-'
-#!/usr/bin/python3
 
-canUnlockAll = __import__('0-lockboxes').canUnlockAll
+`#!/usr/bin/python3`
 
-boxes = [[1], [2], [3], [4], []]
-print(canUnlockAll(boxes))
+`canUnlockAll = __import__('0-lockboxes').canUnlockAll`
 
-boxes = [[1, 4, 6], [2], [0, 4, 1], [5, 6, 2], [3], [4, 1], [6]]
-print(canUnlockAll(boxes))
+`boxes = [[1], [2], [3], [4], []]`
+`print(canUnlockAll(boxes))`
 
-boxes = [[1, 4], [2], [0, 4, 1], [3], [], [4, 1], [5, 6]]
-print(canUnlockAll(boxes))
-`
+`boxes = [[1, 4, 6], [2], [0, 4, 1], [5, 6, 2], [3], [4, 1], [6]]`
+`print(canUnlockAll(boxes))`
+
+`boxes = [[1, 4], [2], [0, 4, 1], [3], [], [4, 1], [5, 6]]`
+`print(canUnlockAll(boxes))`
 
 
+#### Output:
+
+'vagrant@ubuntu-xenial:~/0x00-lockboxes$ ./main_0.py`
+`True`
+`True`
+`False`
+
+Editor:
+* Emacs
+
+Language:
+* Python3
