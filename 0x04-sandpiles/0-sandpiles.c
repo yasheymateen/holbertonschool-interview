@@ -1,4 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#include "sandpiles.h"
+
 
 /**
  * tumble_square - tumble sandpile square grid
@@ -7,7 +12,6 @@
  * @col: column
  * Return: void
  */
-
 void tumble_square(int grid[3][3], int row, int col)
 {
   grid[row][col] -= 4;
@@ -19,6 +23,26 @@ void tumble_square(int grid[3][3], int row, int col)
     grid[row][col - 1] += 1;
   if (col < 2)
     grid[row][col + 1] += 1;
+}
+
+/**
+ * is_stable - checks stability
+ * @grid: grid
+ * Return: true if stable, false otherwise
+ */
+static bool is_stable(int grid[3][3])
+{
+  size_t row, col;
+
+  for (row = 0; row < 3; ++row)
+    {
+      for (col = 0; col < 3; ++col)
+	{
+	  if (grid[row][col] > 3)
+	    return (false);
+	}
+    }
+  return (true);
 }
 
 /**
@@ -65,9 +89,11 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 	}
       }
     }
-    if (tumbled) {
-      printf("=\n");
-      _print_grid(grid2);
+    while (!is_stable(grid1)) {
+      if (tumbled) {
+	printf("=\n");
+	_print_grid(grid1);
+      }
     }
   }
 }
