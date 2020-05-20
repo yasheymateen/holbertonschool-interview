@@ -48,7 +48,7 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
   int tumbled = 1, row, col;
 
   for (row = 0; row < 3; row++)
-    for (col = 0; col < 3; col++K)
+    for (col = 0; col < 3; col++)
       grid1[row][col] += grid2[row][col];
   while (tumbled) {
     for (row = 0; row < 3; row++)
