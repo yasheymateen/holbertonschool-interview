@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "sandpiles.h"
+
 /**
  * tumble_square - tumble sandpile square grid
  * @grid: grid
@@ -7,6 +7,7 @@
  * @col: column
  * Return: void
  */
+
 void tumble_square(int grid[3][3], int row, int col)
 {
   grid[row][col] -= 4;
@@ -51,16 +52,19 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
     for (col = 0; col < 3; col++)
       grid1[row][col] += grid2[row][col];
   while (tumbled) {
-    for (row = 0; row < 3; row++)
+    for (row = 0; row < 3; row++) {
       for (col = 0; col < 3; col++)
 	grid2[row][col] = grid1[row][col];
+    }
     tumbled = 0;
-    for (row = 0; row < 3; row++)
-      for (col = 0; col < 3; col++)
+    for (row = 0; row < 3; row++) {
+      for (col = 0; col < 3; col++) {
 	if (grid2[row][col] > 3) {
 	  tumble_square(grid1, row, col);
 	  tumbled = 1;
 	}
+      }
+    }
     if (tumbled) {
       printf("=\n");
       _print_grid(grid2);
