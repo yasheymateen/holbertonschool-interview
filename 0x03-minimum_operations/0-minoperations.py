@@ -1,11 +1,22 @@
 #!/usr/bin/python3
+import math
 
+"""
+calculates the fewest number of operations needed to result
+in exactly n H characters
+"""
 
 def minOperations(n):
-    """ Calculate fewest # of opertions needed to result in n H chars """
-
+    sumOp = 0
+    
     if n <= 1:
-        return 0
-    for x in range(2, n + 1):
-        if n % x == 0:
-            return minOperations(int(n / x)) + x
+        return sumOp
+    for i in range(2, int(math.sqrt(n) + 1)):
+        while n % i == 0:
+            sumOp += i
+            n = n // i
+        if n > 1:
+            sumOp += n
+        return sumOp
+
+            
