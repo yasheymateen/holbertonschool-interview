@@ -15,8 +15,8 @@ def minOperations(n):
         while n % i == 0:
             sumOp += i
             n = n // i
-        if n > 1:
-            sumOp += n
-        return sumOp
+    if n > 1:
+        sumOp += n
+    return sumOp
 
             
