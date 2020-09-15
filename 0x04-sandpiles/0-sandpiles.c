@@ -1,98 +1,119 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include "sandpiles.h"
 
 
 /**
- * tumble_square - tumble sandpile square grid
- * @grid: grid
- * @row: row
- * @col: column
- * Return: void
+ * print_grid - print the sandpile.
+ *
+ * @grid: the sandpile.
+ * Return: void.
+ *
  */
-void tumble_square(int grid[3][3], int row, int col)
+static void print_grid(int grid[3][3])
 {
-  grid[row][col] -= 4;
-  if (row > 0)
-    grid[row - 1][col] += 1;
-  if (row < 2)
-    grid[row + 1][col] += 1;
-  if (col > 0)
-    grid[row][col - 1] += 1;
-  if (col < 2)
-    grid[row][col + 1] += 1;
+  int i, j;
+
+  for (i = 0; i < 3; i++)
+    {
+      for (j = 0; j < 3; j++)
+	{
+	  if (j)
+	    printf(" ");
+	  printf("%d", grid[i][j]);
+	}
+      printf("\n");
+    }
 }
 
 /**
- * is_stable - checks stability
- * @grid: grid
- * Return: true if stable, false otherwise
+ * check - check if the sandpile could be toppling.
+ *
+ * @grid: the sandpile.
+ * @grid2: another grid for save the initial condiction.
+ * Return: 0 if it could be, 1 if doesn't.
+ *
  */
-static bool is_stable(int grid[3][3])
+int check(int grid[3][3], int grid2[3][3])
 {
-  size_t row, col;
+  int i, j, flag = 1;
 
-  for (row = 0; row < 3; ++row)
+  for (i = 0; i < 3; i++)
     {
-      for (col = 0; col < 3; ++col)
+      for (j = 0; j < 3; j++)
 	{
-	  if (grid[row][col] > 3)
-	    return (false);
+	  if (grid[i][j] > 3)
+	    {
+	      flag = 0;
+	      grid2[i][j] = 1;
+	    }
+	  else
+	    {
+	      grid2[i][j] = 0;
+	    }
 	}
     }
-  return (true);
+  return (flag);
 }
 
+
 /**
- * _print_grid - print grid
- * @grid: grid
+ * toppling - toppling round the sandpile.
+ *
+ * @grid: the sandpile.
+ * @grid2: another grid for save the initial condiction.
+ * Return: void.
+ *
  */
-void _print_grid(int grid[3][3])
+void toppling(int grid[3][3], int grid2[3][3])
 {
-  int row, col;
+  int i, j;
 
-  for (row = 0; row < 3; row++) {
-    for (col = 0; col < 3; col++) {
-      if (col < 2)
-	printf("%d ", grid[row][col]);
-      else
-	printf("\n");
+  for (i = 0; i < 3; i++)
+    {
+      for (j = 0; j < 3; j++)
+	{
+	  if (grid[i][j] > 3 && grid2[i][j] == 1)
+	    {
+	      grid[i][j] -= 4;
+	      if (i - 1 >= 0)
+		grid[i - 1][j] += 1;
+	      if (i + 1 <= 2)
+		grid[i + 1][j] += 1;
+	      if (j - 1 >= 0)
+		grid[i][j - 1] += 1;
+	      if (j + 1 <= 2)
+		grid[i][j + 1] += 1;
+	    }
+	}
     }
-  }
 }
 
+
 /**
- * sandpiles_sum - sum two sandpiles
- * @grid1: first grid
- * @grid2: 2nd grid
+ * sandpiles_sum - compute the sum of two sandpiles.
+ *
+ * @grid1: first sandpile.
+ * @grid2: second sandpile.
+ * Return: void.
+ *
  */
+
 void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 {
-  int tumbled = 1, row, col;
+  int i, j;
 
-  for (row = 0; row < 3; row++)
-    for (col = 0; col < 3; col++)
-      grid1[row][col] += grid2[row][col];
-  while (tumbled) {
-    for (row = 0; row < 3; row++) {
-      for (col = 0; col < 3; col++)
-	grid2[row][col] = grid1[row][col];
-    }
-    tumbled = 0;
-    for (row = 0; row < 3; row++) {
-      for (col = 0; col < 3; col++) {
-	if (grid2[row][col] > 3) {
-	  tumble_square(grid1, row, col);
-	  tumbled = 1;
+  for (i = 0; i < 3; i++)
+    {
+      for (j = 0; j < 3; j++)
+	{
+	  grid1[i][j] += grid2[i][j];
 	}
-      }
     }
-    while (!is_stable(grid1)) {
-      if (tumbled) {
-	printf("=\n");
-	_print_grid(grid1);
-      }
+
+  while (check(grid1, grid2) == 0)
+    {
+      printf("=\n");
+      print_grid(grid1);
+      toppling(grid1, grid2);
     }
-  }
 }
