@@ -1,137 +1,182 @@
+#include <stdio.h>
 #include "binary_trees.h"
 
 /**
- * pop - pops first node of queue
- * @h_queue: double ptr to first element of queue
- */
-void pop(queue_t **h_queue)
-{
-  queue_t *tmp = *h_queue;
-
-  *h_queue = (*h_queue)->next;
-  free(tmp);
-}
-
-/**
- * insert - inserts new node
- * @h_queue: double ptr to first element of queue
- * @node: node to insert
- * Return: ptr to new node
- */
-queue_t *insert(queue_t **h_queue, heap_t *node)
-{
-  queue_t *new;
-  queue_t *curr;
-
-  new = malloc(sizeof(*new));
-  if (!new)
-    return (NULL);
-  new->node = node;
-  new->next = NULL;
-  curr = *h_queue;
-
-  if (!*h_queue)
-    {
-      *h_queue = new;
-      return (new);
-    }
-  while (curr->next)
-    curr = curr->next;
-  curr->next = new;
-  return (new);
-}
-
-/**
- * traversal - level order traversal through queue
- * @root: double pointer to the start of the queue
- * @value: value to give inserted nodes
+ * height_recursion - function that calculates the height using recursion
  *
- * Return: pointer to something
+ * @tree: node to find recursion
+ * Return: the number of height nodes
  */
-heap_t *traversal(heap_t **root, int value)
+
+int height_recursion(const binary_tree_t *tree)
 {
-  queue_t *h_queue = NULL;
-  heap_t *curr;
-  heap_t *new = NULL;
+	int left_count = 0, right_count = 0;
 
-  if (!insert(&h_queue, *root))
-    return (NULL);
-  while (h_queue)
-    {
-      curr = h_queue->node;
-      if (curr->left)
-	{
-	  if (!insert(&h_queue, curr->left))
-	    return (NULL);
-	}
-      else if (!new)
-	{
-	  new = binary_tree_node(curr, value);
-	  curr->left = new;
-	  if (!new)
-	    return (NULL);
-	}
-      if (curr->right)
-	{
-	  if (!insert(&h_queue, curr->right))
-	    return (NULL);
-	}
-      else if (!new)
-	{
-	  new = binary_tree_node(curr, value);
-	  curr->right = new;
-	  if (!new)
-	    return (NULL);
-
-	}
-      pop(&h_queue);
-    }
-  return (new);
+	if (tree->left)
+		left_count = height_recursion(tree->left);
+	if (tree->right)
+		right_count = height_recursion(tree->right);
+	return ((left_count > right_count) ? left_count + 1 : right_count + 1);
 }
 
 /**
- * swap - if necessary, swaps the new node's value with it's parent's value
- * @new: new node to swapt value with
- *
- * Return: a pointer to the modified value
+ * binary_tree_balance - returns the height of a tree
+ * @tree: is the node from which to get the node
+ * Return: an integer with the height or 0 if node is null
  */
-heap_t *swap(heap_t *new)
+int binary_tree_balance(const binary_tree_t *tree)
 {
-  heap_t *ptr = new;
-  int tmp;
+	int left = 0, right = 0;
 
-  while (ptr->parent)
-    {
-      if (ptr->n > ptr->parent->n)
+	if (tree)
 	{
-	  tmp = ptr->n;
-	  ptr->n = ptr->parent->n;
-	  ptr->parent->n = tmp;
-	  new = new->parent;
+		if (tree->left)
+			left = height_recursion(tree->left);
+		if (tree->right)
+			right = height_recursion(tree->right);
+		return (left - right);
 	}
-      ptr = ptr->parent;
-    }
-  return (new);
+	else
+		return (0);
 }
 
 /**
- * heap_insert - inserts a value into a Max Binary Heap
- * @root: double pointer to the root node of the Heap
- * @value: value stored in the node to be inserted
+ * binary_tree_is_full - checks if a tree is full.
  *
- * Return: a pointer to the inserted node, or NULL on failure
+ * @tree: root node.
+ * Return: 1 if full or 0 if not
  */
+int binary_tree_is_full(const binary_tree_t *tree)
+{
+	if (!tree)
+		return (1);
+	if (!binary_tree_is_full(tree->left))
+		return (0);
+	if (!binary_tree_is_full(tree->right))
+		return (0);
+	if ((tree->left && !tree->right) || (!tree->left && tree->right))
+		return (0);
+	return (1);
+}
+
+
+/**
+ * binary_tree_is_perfect - Returns if the tree is perfect
+ * @tree: is the node from which to get the node
+ *
+ * Return: 1 if is perfect, 0 if doesn't
+ */
+int binary_tree_is_perfect(const binary_tree_t *tree)
+{
+	int isperfect_left = 1, isperfect_right = 1;
+
+	if (tree == NULL)
+		return (0);
+	if (tree->left)
+		isperfect_left = binary_tree_is_perfect(tree->left);
+	if (tree->right)
+		isperfect_right = binary_tree_is_perfect(tree->right);
+	if (binary_tree_is_full(tree) && !binary_tree_balance(tree))
+		return (isperfect_left * isperfect_right);
+	return (0);
+}
+/**
+ * recursion_heap - performs the recursion for adding new nodes
+ *
+ * @node: root
+ * @value: value of the new node
+ * Return: pointer to the new node
+ */
+heap_t *recursion_heap(heap_t **node, int value)
+{
+	heap_t *new_node_r = NULL, *new_node_l = NULL, *tmp;
+
+	if (*node == NULL)
+	{
+		*node = binary_tree_node(*node, value);
+		return (*node);
+	}
+	tmp = *node;
+	if (binary_tree_is_perfect(tmp) && !(tmp->parent))
+	{
+		while (tmp->left)
+			tmp = tmp->left;
+		tmp->left = binary_tree_node(tmp, value);
+		return (tmp->left);
+	}
+	else if (tmp->left && !tmp->right)
+	{
+		tmp->right = binary_tree_node(tmp, value);
+		return (tmp->right);
+	}
+	else if (tmp->left && tmp->right && binary_tree_balance(tmp) == 1
+	&& binary_tree_is_perfect(tmp->left))
+	{
+		tmp = tmp->right;
+		while (tmp->left)
+			tmp = tmp->left;
+		tmp->left = binary_tree_node(tmp, value);
+		return (tmp->left);
+	}
+	if (tmp->left)
+		new_node_l = recursion_heap(&(tmp->left), value);
+	if (tmp->right && !new_node_l)
+		new_node_r = recursion_heap(&(tmp->right), value);
+	if (new_node_l)
+		return (new_node_l);
+	else if (new_node_r)
+		return (new_node_r);
+	return (NULL);
+}
+
+/**
+ * heap_insert - inserts a value in a binary heap.
+ *
+ * @root: root of a tree.
+ * @value: value to insert.
+ * Return: The new node or null.
+ */
+
 heap_t *heap_insert(heap_t **root, int value)
 {
-  heap_t *new;
+	heap_t *tmp, *new_node, *current;
 
-  if (!root)
-    return (NULL);
-  if (!*root)
-    {
-      *root = binary_tree_node(*root, value);
-      return (*root);
-    }
-  new = traversal(root, value);
-  return (swap(new));
+	new_node = recursion_heap(root, value);
+	while (new_node && new_node->parent && new_node->n > new_node->parent->n)
+	{
+		tmp = new_node->parent;
+		if (tmp->right == new_node)
+		{
+			current = new_node->left, new_node->left = tmp->left;
+			if (new_node->left)
+				new_node->left->parent = new_node;
+			tmp->left = current;
+			if (tmp->left)
+				tmp->left->parent = tmp;
+			current = new_node->right, new_node->right = tmp;
+			tmp->right = current;
+		}
+		else
+		{
+			current = new_node->right, new_node->right = tmp->right;
+			if (new_node->right)
+				new_node->right->parent = new_node;
+			tmp->right = current;
+			if (tmp->right)
+				tmp->right->parent = tmp;
+			current = new_node->left, new_node->left = tmp;
+			tmp->left = current;
+		}
+		if (current)
+			current->parent = tmp;
+		new_node->parent = tmp->parent;
+		if (tmp->parent && tmp->parent->right == tmp)
+			tmp->parent->right = new_node;
+		else if (tmp->parent)
+			tmp->parent->left = new_node;
+		tmp->parent = new_node;
+	}
+	if (new_node && !new_node->parent)
+		*root = new_node;
+	return (new_node);
 }
