@@ -32,3 +32,7 @@ print(validUTF8(data))
 
 data = [229, 65, 127, 256]
 print(validUTF8(data))
+
+
+## Author
+* **Yashar Mateen** - [yasheymateen](https://github.com/yasheymateen)
