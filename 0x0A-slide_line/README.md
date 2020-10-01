@@ -15,10 +15,10 @@
 ## Usage
 * `gcc -Wall -Wextra -Werror -pedantic -o 0-slide_line 0-main.c 0-slide_line.c`
 * `./0-slide_line L 2 2 0 0`
-- Output:
-`Line: 2, 2, 0, 0`
-`Slide to the left`
-`Line: 4, 0, 0, 0`
+* Output:
+** `Line: 2, 2, 0, 0`
+** `Slide to the left`
+** `Line: 4, 0, 0, 0`
 
 ## Author
 * **Yashar Mateen** - [yasheymateen](https://www.github.com/yasheymateen)
